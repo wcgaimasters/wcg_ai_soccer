@@ -187,7 +187,7 @@ void game::run()
 
     const auto ret = player_team_infos_.emplace(std::piecewise_construct,
                                                 std::make_tuple(random_string(c::KEY_LENGTH)),
-                                                std::make_tuple(name, rating, path_prefix + exe, path_prefix + data,
+                                                std::make_tuple(name, rating, exe, data,
                                                                 ROLE_PLAYER, team == T_RED)
                                                 );
 
@@ -388,18 +388,19 @@ void game::run_participant()
       auto& ti = kv.second;
 
       // launch participant process
-      boost::filesystem::path p_exe = ti.executable;
+      boost::filesystem::path p_exe = "../../plugins/comm_module/comm_module.py";
 #ifdef _WIN32
       // Windows needs an additional routine of directly calling 'python'
       // and pass the script path as an argument to run python scripts
       if (ti.executable.compare(ti.executable.length() - 3, 3, ".py") || !boost::filesystem::exists(ti.executable)) {
 #endif
       ti.c = bp::child(bp::exe = p_exe.filename().string(),
-                       bp::args = {c::SERVER_IP,
+                       bp::args = {ti.executable,
+                           c::SERVER_IP,
                            std::to_string(rs_port_),
                            c::REALM,
                            key,
-                           boost::filesystem::absolute(ti.datapath).string()},
+                           ti.datapath},
                        bp::start_dir = p_exe.parent_path());
 #ifdef _WIN32
       }

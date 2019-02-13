@@ -132,7 +132,7 @@ private:
   std::size_t find_free_port() const
   {
     boost::asio::io_service service;
-    boost::asio::ip::tcp::acceptor acceptor(service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0));
+    boost::asio::ip::tcp::acceptor acceptor(service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 2000));
     return acceptor.local_endpoint().port();
   }
 
