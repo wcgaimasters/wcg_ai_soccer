@@ -22,24 +22,27 @@ class PlayerProtocol(WebSocketServerProtocol):
         print("WebSocket connection open.")
 
     def str_to_bool(self, s):
-        if s == 'True':
+        if (s == 'True' or s == 'true' or s == 'TRUE'):
             return True
-        elif s == 'False':
+        elif (s == 'False' or s == 'false' or s == 'FALSE'):
             return False
         else:			
             raise ValueError
     
     def onMessage(self, payload, isBinary):
 
-        command = payload.decode('utf8')
-        info = command.split()
-        with open('../../config.json', 'r') as config_file:
+        info = json.loads(payload.decode('utf8'))
+        with open('/home/wcg/wcg_ai_soccer/config.json', 'r') as config_file:
             data = json.load(config_file)
-            data['rule']['game_time'] = int(info[0])
-            data['rule']['deadlock'] = self.str_to_bool(info[1])
-            data['team_a']['executable'] = info[2]
-            data['team_b']['executable'] = info[3]
-        with open('../../config.json', 'w') as config_file:
+            data['rule']['game_time'] = int(info['rule']['game_time'])
+            data['rule']['deadlock'] = self.str_to_bool(info['rule']['deadlock'])
+            data['team_a']['executable'] = info['team_a']['name']
+            data['team_a']['executable'] = info['team_a']['executable']
+            data['team_b']['executable'] = info['team_b']['name']
+            data['team_b']['executable'] = info['team_b']['executable']
+            data['tool']['repeat'] = self.str_to_bool(info['tool']['repeat'])
+            data['tool']['record'] = self.str_to_bool(info['tool']['record']) 
+        with open('/home/wcg/wcg_ai_soccer/config.json', 'w') as config_file:
             json.dump(data, config_file)
 			
         # echo back message verbatim
@@ -56,5 +59,6 @@ if __name__ == '__main__':
     factory.protocol = PlayerProtocol
     factory.setProtocolOptions(maxConnections=2)
 
+    print("Listening to config requests...")
     reactor.listenTCP(9001, factory)
     reactor.run()
