@@ -36,9 +36,9 @@ class PlayerProtocol(WebSocketServerProtocol):
             data = json.load(config_file)
             data['rule']['game_time'] = int(info['rule']['game_time'])
             data['rule']['deadlock'] = self.str_to_bool(info['rule']['deadlock'])
-            data['team_a']['executable'] = info['team_a']['name']
+            data['team_a']['name'] = info['team_a']['name']
             data['team_a']['executable'] = info['team_a']['executable']
-            data['team_b']['executable'] = info['team_b']['name']
+            data['team_b']['name'] = info['team_b']['name']
             data['team_b']['executable'] = info['team_b']['executable']
             data['tool']['repeat'] = self.str_to_bool(info['tool']['repeat'])
             data['tool']['record'] = self.str_to_bool(info['tool']['record']) 
